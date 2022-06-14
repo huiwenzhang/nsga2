@@ -13,10 +13,10 @@ public:
 
     struct NsgaConfig {
         double mutation_prob = 0.2;
-        int num_mutation_gens = 5;
+        int num_mutation_gens = 3;
         int num_tour_particips = 2;
-        int num_generations = 200;
-        int num_individuals = 100;
+        int num_generations = 150;
+        int num_individuals = 50;
     };
 
     void inline setConfig(const NsgaConfig& config) { config_ = config; }

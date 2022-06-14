@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_set>
 
 NSGA2::NSGA2(ZdtProblemPtr& problem) : ptr_problem_(problem) { printConfig(); }
 
@@ -16,7 +17,8 @@ NSGA2::NSGA2(ZdtProblemPtr& problem, int num_generations, int num_individual)
 }
 
 void NSGA2::printConfig() const {
-    // minfo("Run NSGA2, configs #generations %d, #individuals %d, #mutation gens %d, #tour particips "
+    // minfo("Run NSGA2, configs #generations %d, #individuals %d, #mutation gens %d, #tour
+    // particips "
     //       "%d, mutation prob %.3f",
     //       config_.num_generations,
     //       config_.num_individuals,
@@ -39,6 +41,7 @@ void NSGA2::crossOver(const Individual& s1,
                       const Individual& s2,
                       Individual& child1,
                       Individual& child2) {
+    if (s1.features.size() == 1) return;
     ptr_problem_->generateIndividual(child1);
     ptr_problem_->generateIndividual(child2);
     int num_genes = child1.features.size();
@@ -55,6 +58,7 @@ void NSGA2::crossOver(const Individual& s1,
 }
 
 void NSGA2::mutate(Individual& child) {
+    if (child.features.size() == 1) { config_.num_mutation_gens = 1; }
     std::vector<int> ids;
     for (int i = 0; i < child.features.size(); i++) { ids.emplace_back(i); }
     std::vector<int> genes_to_mutate;
@@ -104,6 +108,7 @@ PopulationPtr NSGA2::createChildren(const PopulationPtr& parent) {
         while (parent1.features == parent2.features) { tournament(parent, parent2); }
 
         Individual child1, child2;
+
         crossOver(parent1, parent2, child1, child2);
         mutate(child1);
         mutate(child2);
